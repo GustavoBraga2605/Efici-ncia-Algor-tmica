@@ -1,103 +1,101 @@
-// Versão final revisada pelo grupo — validada no VSCode
-// Ajustes: checagem de alocação, liberação completa de memória e mensagens mais informativas
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct Node {
-    int valor;
-    struct Node* ant;
-    struct Node* prox;
-} Node;
+#include "lista_dupla.h"
 
 // Criação segura de nó
-Node* criarNo(int valor) {
-    Node* novo = (Node*)malloc(sizeof(Node));
+No* criarNo(int valor) {
+    No* novo = (No*)malloc(sizeof(No));
     if (novo == NULL) {
-        fprintf(stderr, "Erro: falha ao alocar memória.\n");
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "Erro: falha ao alocar memória para novo nó.\n");
+        exit(1);
     }
     novo->valor = valor;
-    novo->ant = NULL;
     novo->prox = NULL;
+    novo->ant = NULL;
     return novo;
 }
 
-// Insere no início
-void inserirInicio(Node** head, int valor) {
-    Node* novo = criarNo(valor);
-    novo->prox = *head;
-    if (*head != NULL)
-        (*head)->ant = novo;
-    *head = novo;
-}
-
-// Insere no final
-void inserirFim(Node** head, int valor) {
-    Node* novo = criarNo(valor);
-    if (*head == NULL) {
-        *head = novo;
+// Inserção ordenada sem duplicatas
+void inserirOrdenado(No** inicio, int valor) {
+    if (buscarValor(*inicio, valor)) {
+        printf("Aviso: valor %d já existe na lista.\n", valor);
         return;
     }
-    Node* atual = *head;
-    while (atual->prox != NULL)
+
+    No* novo = criarNo(valor);
+
+    if (*inicio == NULL) {
+        *inicio = novo;
+        return;
+    }
+
+    No* atual = *inicio;
+    while (atual->prox != NULL && atual->valor < valor) {
         atual = atual->prox;
-    atual->prox = novo;
-    novo->ant = atual;
+    }
+
+    if (atual->valor >= valor) {
+        novo->prox = atual;
+        novo->ant = atual->ant;
+
+        if (atual->ant != NULL)
+            atual->ant->prox = novo;
+        else
+            *inicio = novo;
+
+        atual->ant = novo;
+    } else {
+        atual->prox = novo;
+        novo->ant = atual;
+    }
+    printf("Valor %d inserido com sucesso!\n", valor);
 }
 
-// Remove do início
-void removerInicio(Node** head) {
-    if (*head == NULL) {
-        printf("Lista vazia. Nada a remover.\n");
-        return;
+// Busca por valor
+No* buscarValor(No* inicio, int valor) {
+    while (inicio != NULL) {
+        if (inicio->valor == valor) return inicio;
+        inicio = inicio->prox;
     }
-    Node* temp = *head;
-    *head = (*head)->prox;
-    if (*head != NULL)
-        (*head)->ant = NULL;
-    free(temp);
+    return NULL;
 }
 
-// Remove do fim
-void removerFim(Node** head) {
-    if (*head == NULL) {
-        printf("Lista vazia. Nada a remover.\n");
+// Remoção segura
+void removerValor(No** inicio, int valor) {
+    No* atual = buscarValor(*inicio, valor);
+
+    if (atual == NULL) {
+        printf("Valor %d não encontrado.\n", valor);
         return;
     }
-    Node* atual = *head;
-    while (atual->prox != NULL)
-        atual = atual->prox;
 
     if (atual->ant != NULL)
-        atual->ant->prox = NULL;
+        atual->ant->prox = atual->prox;
     else
-        *head = NULL;
+        *inicio = atual->prox;
+
+    if (atual->prox != NULL)
+        atual->prox->ant = atual->ant;
 
     free(atual);
+    printf("Valor %d removido com sucesso!\n", valor);
 }
 
-// Imprime do início ao fim
-void imprimirDireta(Node* head) {
-    printf("Lista (direta): ");
-    while (head != NULL) {
-        printf("%d <-> ", head->valor);
-        head = head->prox;
+// Exibição completa
+void exibirLista(No* inicio) {
+    printf("Lista (início → fim): ");
+    while (inicio != NULL) {
+        printf("%d <-> ", inicio->valor);
+        inicio = inicio->prox;
     }
     printf("NULL\n");
 }
 
-// Imprime do fim ao início
-void imprimirReversa(Node* head) {
-    if (head == NULL) {
-        printf("Lista vazia.\n");
-        return;
-    }
+// Exibição reversa
+void exibirListaReversa(No* inicio) {
+    if (inicio == NULL) return;
+    No* atual = inicio;
+    while (atual->prox != NULL) atual = atual->prox;
 
-    Node* atual = head;
-    while (atual->prox != NULL)
-        atual = atual->prox;
-
-    printf("Lista (reversa): ");
+    printf("Lista (fim → início): ");
     while (atual != NULL) {
         printf("%d <-> ", atual->valor);
         atual = atual->ant;
@@ -105,38 +103,13 @@ void imprimirReversa(Node* head) {
     printf("NULL\n");
 }
 
-// Libera toda a memória
-void liberarLista(Node** head) {
-    Node* atual = *head;
+// Liberação de memória
+void liberarLista(No** inicio) {
+    No* atual = *inicio;
     while (atual != NULL) {
-        Node* temp = atual;
+        No* temp = atual;
         atual = atual->prox;
         free(temp);
     }
-    *head = NULL;
-}
-
-int main() {
-    Node* lista = NULL;
-
-    printf("\n--- Teste Lista Duplamente Encadeada ---\n");
-
-    inserirInicio(&lista, 10);
-    inserirFim(&lista, 20);
-    inserirInicio(&lista, 5);
-    inserirFim(&lista, 30);
-
-    imprimirDireta(lista);
-    imprimirReversa(lista);
-
-    removerInicio(&lista);
-    imprimirDireta(lista);
-
-    removerFim(&lista);
-    imprimirDireta(lista);
-
-    liberarLista(&lista);
-    printf("Memória liberada com sucesso.\n");
-
-    return 0;
+    *inicio = NULL;
 }
