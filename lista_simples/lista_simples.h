@@ -4,18 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Estrutura do nó
+// Estrutura de nó da lista simplesmente encadeada
 typedef struct No {
-    int dado;
+    int valor;
     struct No* prox;
 } No;
 
-// Funções principais
+// Protótipos das funções principais
 No* criarNo(int valor);
-void inserirInicio(No** inicio, int valor);
-void inserirFim(No** inicio, int valor);
-void remover(No** inicio, int valor);
-void imprimirLista(No* inicio);
+void inserirOrdenado(No** inicio, int valor);
+void removerValor(No** inicio, int valor);
+No* buscarValor(No* inicio, int valor);
+void exibirLista(No* inicio);
 void liberarLista(No** inicio);
 
 #endif
