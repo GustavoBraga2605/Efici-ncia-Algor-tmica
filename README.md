@@ -1,1 +1,1 @@
-# Efici-ncia-Algor-tmica
+# Eficiencia Algoritmica
