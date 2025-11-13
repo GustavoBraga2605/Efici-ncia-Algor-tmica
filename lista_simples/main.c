@@ -1,25 +1,27 @@
-#include <stdio.h>
-#include "lista_simples.h" // pode-se alterar para "ia_versao.h" se quiser testar a versão IA
+#include "lista_simples.h"
 
 int main() {
     No* lista = NULL;
 
-    printf("=== Teste de Lista Simples ===\n");
+    printf("=== TESTE LISTA SIMPLES ===\n");
 
-    inserirInicio(&lista, 10);
-    inserirInicio(&lista, 5);
-    inserirFim(&lista, 20);
-    inserirFim(&lista, 30);
+    inserirOrdenado(&lista, 5);
+    inserirOrdenado(&lista, 2);
+    inserirOrdenado(&lista, 8);
+    inserirOrdenado(&lista, 3);
+    inserirOrdenado(&lista, 8); // duplicado (teste de aviso)
 
-    printf("Lista atual: ");
-    imprimirLista(lista);
+    exibirLista(lista);
 
-    printf("\nRemovendo o elemento 20...\n");
-    remover(&lista, 20);
-    imprimirLista(lista);
+    printf("Removendo valor 2...\n");
+    removerValor(&lista, 2);
+    exibirLista(lista);
 
-    printf("\nLiberando lista...\n");
+    printf("Buscando valor 8...\n");
+    No* resultado = buscarValor(lista, 8);
+    if (resultado) printf("Valor encontrado: %d\n", resultado->valor);
+    else printf("Valor não encontrado.\n");
+
     liberarLista(&lista);
-
     return 0;
 }
