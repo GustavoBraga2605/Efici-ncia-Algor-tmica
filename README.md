@@ -3,7 +3,9 @@
 
 ## Integrantes
 Gustavo Cordeiro Braga - RM: 562247
+
 Murilo Justino Arcanjo - RM: 565470
+
 Rafael Quattrer Dalla Costa - RM: 562052
 
 ---
